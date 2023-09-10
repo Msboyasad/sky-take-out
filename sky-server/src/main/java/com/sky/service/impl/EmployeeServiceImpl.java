@@ -9,10 +9,11 @@ import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
 import com.sky.service.EmployeeService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
-
+@Slf4j
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
 
@@ -31,13 +32,17 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         //1、根据用户名查询数据库中的数据
         Employee employee = employeeMapper.getByUsername(username);
+        //password = DigestUtils.md5DigestAsHex(password.getBytes());
+
+
 
         //2、处理各种异常情况（用户名不存在、密码不对、账号被锁定）
         if (employee == null) {
             //账号不存在
             throw new AccountNotFoundException(MessageConstant.ACCOUNT_NOT_FOUND);
         }
-
+        log.info("employee.password{}",employee.getPassword());
+        log.info("password{}",password);
         //密码比对
         // TODO 后期需要进行md5加密，然后再进行比对
         if (!password.equals(employee.getPassword())) {
