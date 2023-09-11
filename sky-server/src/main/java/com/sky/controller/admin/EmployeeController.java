@@ -3,20 +3,22 @@ package com.sky.controller.admin;
 import com.sky.constant.JwtClaimsConstant;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.properties.JwtProperties;
+import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.EmployeeService;
 import com.sky.utils.JwtUtil;
 import com.sky.vo.EmployeeLoginVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -78,10 +80,61 @@ public class EmployeeController {
         return Result.success(employeeLoginVO);
     }
 
+    /**
+     * 添加员工信息接口
+     *
+     * @param employeeDTO
+     * @return
+     */
+    @ApiOperation(value = "添加员工信息接口")
     @PostMapping
     public Result add(@RequestBody EmployeeDTO employeeDTO) {
         boolean flag = employeeService.add(employeeDTO);
         return flag ? Result.success("添加员工信息成功！") : Result.success("添加员工信息失败！");
+    }
+
+    /**
+     * 员工分页查询接口
+     *
+     * @param employeePageQueryDTO
+     * @return
+     */
+    @ApiOperation("员工分页查询接口")
+    @GetMapping("/page")
+    public Result page(EmployeePageQueryDTO employeePageQueryDTO) {
+        PageResult page = employeeService.page(employeePageQueryDTO);
+        return Result.success(page);
+    }
+
+    /**
+     * 修改员工状态
+     */
+    @ApiOperation("修改员工状态接口")
+    @PostMapping("/status/{status}")
+    public Result status(@PathVariable Integer status, Long id) {
+        Employee employee = Employee.builder()
+                .status(status)
+                .id(id)
+                .build();
+        employeeService.update(employee);
+        return Result.success();
+    }
+
+    @ApiOperation("根据Id获取员工信息")
+    @GetMapping("{id}")
+    public  Result getById(@PathVariable Integer id){
+        Employee employee =employeeService.getById(id);
+        return Result.success(employee);
+    }
+
+    @ApiOperation("修改员工信息")
+    @PutMapping
+    public Result updateById(@RequestBody  EmployeeDTO employeeDTO){
+        Employee employee = Employee.builder().build();
+        BeanUtils.copyProperties(employeeDTO,employee);
+        log.info("修改员工前端传过来的数据{}",employee);
+        employeeService.update(employee);
+        return Result.success();
     }
 
 }

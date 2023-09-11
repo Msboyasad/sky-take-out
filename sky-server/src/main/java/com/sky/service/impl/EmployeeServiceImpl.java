@@ -1,14 +1,19 @@
 package com.sky.service.impl;
 
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.constant.StatusConstant;
+import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
+import com.sky.dto.EmployeePageQueryDTO;
 import com.sky.entity.Employee;
 import com.sky.exception.AccountLockedException;
 import com.sky.exception.AccountNotFoundException;
 import com.sky.exception.PasswordErrorException;
 import com.sky.mapper.EmployeeMapper;
+import com.sky.result.PageResult;
 import com.sky.service.EmployeeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
@@ -19,6 +24,7 @@ import org.springframework.util.DigestUtils;
 
 import javax.servlet.http.HttpSession;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -67,18 +73,62 @@ public class EmployeeServiceImpl implements EmployeeService {
         return employee;
     }
 
+    /**
+     * 员工信息添加
+     *
+     * @param employeeDTO
+     * @return
+     */
     @Override
-    public boolean add( EmployeeDTO employeeDTO) {
+    public boolean add(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
         BeanUtils.copyProperties(employeeDTO, employee);
         String password = DigestUtils.md5DigestAsHex(("123456" + salt).getBytes());
+        employee.setStatus(StatusConstant.ENABLE);
         employee.setPassword(password);
         employee.setCreateTime(LocalDateTime.now());
         employee.setUpdateTime(LocalDateTime.now());
-        employee.setCreateUser(1L);
-        employee.setUpdateUser(1L);
+        employee.setCreateUser(BaseContext.get());
+        employee.setUpdateUser(BaseContext.get());
         employeeMapper.add(employee);
         return true;
     }
 
+    /**
+     * 分页查询员工信息
+     *
+     * @param employeePageQueryDTO
+     * @return
+     */
+    @Override
+    public PageResult page(EmployeePageQueryDTO employeePageQueryDTO) {
+        //设置分页条件
+        PageHelper.startPage(employeePageQueryDTO.getPage(), employeePageQueryDTO.getPageSize());
+        //根据name查询数据
+        List<Employee> employeeList = employeeMapper.getByName(employeePageQueryDTO.getName());
+        Page<Employee> employeePage = (Page<Employee>) employeeList;
+        //设置返回结果
+        return PageResult.builder()
+                .total(employeePage.getTotal())
+                .records(employeePage.getResult())
+                .build();
+    }
+
+    /**
+     * 修改员工信息
+     */
+    @Override
+    public void update(Employee employee) {
+        //设置员工的修改时间
+        employee.setUpdateTime(LocalDateTime.now());
+        //设置修改的员工id
+        employee.setUpdateUser(BaseContext.get());
+        employeeMapper.update(employee);
+    }
+
+    @Override
+    public Employee getById(Integer id) {
+        Employee employee = employeeMapper.getById(id);
+        return employee;
+    }
 }

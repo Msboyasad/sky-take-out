@@ -1,9 +1,10 @@
 package com.sky.mapper;
 
-import com.sky.dto.EmployeeDTO;
 import com.sky.entity.Employee;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 @Mapper
 public interface EmployeeMapper {
@@ -16,5 +17,26 @@ public interface EmployeeMapper {
     @Select("select * from employee where username = #{username}")
     Employee getByUsername(String username);
 
+    /**
+     * 添加员工信息
+     * @param employee
+     */
     void add(Employee employee);
+
+    /**
+     * 根据员工姓名查询信息
+     * @param name
+     * @return
+     */
+    List<Employee> getByName(String name);
+
+    /**
+     * 修改员工信息
+     * @param employee
+     */
+    void update(Employee employee);
+
+
+    @Select("select * from employee where id = #{id}")
+    Employee getById(Integer id);
 }
