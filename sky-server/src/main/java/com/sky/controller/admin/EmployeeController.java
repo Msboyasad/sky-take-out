@@ -1,6 +1,7 @@
 package com.sky.controller.admin;
 
 import com.sky.constant.JwtClaimsConstant;
+import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.entity.Employee;
 import com.sky.properties.JwtProperties;
@@ -75,6 +76,12 @@ public class EmployeeController {
                 .build();
 
         return Result.success(employeeLoginVO);
+    }
+
+    @PostMapping
+    public Result add(@RequestBody EmployeeDTO employeeDTO) {
+        boolean flag = employeeService.add(employeeDTO);
+        return flag ? Result.success("添加员工信息成功！") : Result.success("添加员工信息失败！");
     }
 
 }
