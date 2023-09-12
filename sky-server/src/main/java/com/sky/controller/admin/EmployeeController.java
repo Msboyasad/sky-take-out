@@ -133,6 +133,7 @@ public class EmployeeController {
         Employee employee = Employee.builder().build();
         BeanUtils.copyProperties(employeeDTO,employee);
         log.info("修改员工前端传过来的数据{}",employee);
+        log.info("修改员工前端传过来的数据{}",employee);
         employeeService.update(employee);
         return Result.success();
     }
