@@ -86,10 +86,6 @@ public class EmployeeServiceImpl implements EmployeeService {
         String password = DigestUtils.md5DigestAsHex(("123456" + salt).getBytes());
         employee.setStatus(StatusConstant.ENABLE);
         employee.setPassword(password);
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setCreateUser(BaseContext.get());
-        employee.setUpdateUser(BaseContext.get());
         employeeMapper.add(employee);
         return true;
     }
@@ -119,10 +115,10 @@ public class EmployeeServiceImpl implements EmployeeService {
      */
     @Override
     public void update(Employee employee) {
-        //设置员工的修改时间
-        employee.setUpdateTime(LocalDateTime.now());
-        //设置修改的员工id
-        employee.setUpdateUser(BaseContext.get());
+        ////设置员工的修改时间
+        //employee.setUpdateTime(LocalDateTime.now());
+        ////设置修改的员工id
+        //employee.setUpdateUser(BaseContext.get());
         employeeMapper.update(employee);
     }
 

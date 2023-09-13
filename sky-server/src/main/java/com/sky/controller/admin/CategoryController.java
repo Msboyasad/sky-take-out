@@ -17,6 +17,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Api(tags = "分类管理相关接口")
 @Slf4j
 @RestController
@@ -99,6 +101,18 @@ public class CategoryController {
         BeanUtils.copyProperties(categoryDTO, category);
         categoryService.add(category);
         return Result.success();
+    }
+
+    /**
+     * 根据类型获取分类信息接口
+     * @param type
+     * @return
+     */
+    @ApiOperation("根据类型获取分类信息接口")
+    @GetMapping("/list")
+    public Result list(Integer type){
+        List<Category> categoryList =categoryService.listType(type);
+        return Result.success(categoryList);
     }
 
 }
