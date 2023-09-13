@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.sky.mapper.DishMapper">
+    <!--foreach遍历ID-->
+    <sql id="foreachIds">
+        <foreach collection="ids" item="id" separator="," open="(" close=")">
+            #{id}
+        </foreach>
+    </sql>
+
+
+    <!--插入菜品信息-->
+    <insert id="sava" useGeneratedKeys="true" keyProperty="id">
+        insert into dish
+        values (null, #{name}, #{categoryId}, #{price}, #{image}, #{description}, #{status}, #{createTime},
+                #{updateTime}, #{createUser}, #{updateUser})
+    </insert>
+
+
+    <!--修改菜品信息-->
+    <update id="update">
+        update dish
+        <set>
+            <if test="name!=null and name!=''">
+                name = #{name},
+            </if>
+            <if test="categoryId!=null">
+                category_id = #{categoryId},
+            </if>
+            <if test="price!=null">
+                price = #{price},
+            </if>
+            <if test="image!=null and image !=''">
+                image = #{image},
+            </if>
+            <if test="description!=null and description!=''">
+                description = #{description},
+            </if>
+            <if test="status!=null">
+                status = #{status},
+            </if>
+            <if test="updateTime!=null">
+                update_time = #{updateTime},
+            </if>
+            <if test="updateUser!=null">
+                update_user = #{updateUser}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+    <!--根据ID批量删除菜品信息-->
+    <delete id="BatchDelete">
+        delete from dish where id in
+        <include refid="foreachIds"/>
+    </delete>
+
+
+    <!--条件查询菜品信息-->
+    <select id="findCondition" resultType="com.sky.entity.Dish">
+        select * from dish
+        <where>
+            <if test="name!=null and name!=''">
+                name like concat('%',#{name},'%')
+            </if>
+            <if test="categoryId!=null">
+                and category_id = #{categoryId}
+            </if>
+            <if test="status!=null">
+                and status = #{status}
+            </if>
+        </where>
+        order by create_time desc
+    </select>
+    <!--对查询出来的结果映射到DishVO-->
+    <resultMap id="DishCategoryMap" type="com.sky.vo.DishVO">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="c_name" property="categoryName"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="description" property="description"/>
+        <result column="image" property="image"/>
+        <result column="price" property="price"/>
+        <result column="status" property="status"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <!--对dish菜品表和category进行内连接查询-->
+    <select id="findConditionByCategory" resultMap="DishCategoryMap">
+        select
+        d.id,
+        d.name,
+        d.category_id,
+        c.name c_name,
+        d.price,
+        d.image,
+        d.description,
+        d.status,
+        d.update_time
+        from dish d
+        inner join category c on d.category_id = c.id
+        <where>
+            <if test="name!=null and name!=''">
+                d.name like concat('%',#{name},'%')
+            </if>
+            <if test="categoryId!=null">
+                and d.category_id = #{categoryId}
+            </if>
+            <if test="status!=null">
+                and d.status = #{status}
+            </if>
+        </where>
+        order by d.create_time desc
+    </select>
+
+
+    <!--根据ID查询出状态为起售-->
+    <select id="findStatusById" resultType="java.lang.Integer">
+        select count(1) from dish where id in
+        <include refid="foreachIds"/>
+        and status = 1
+    </select>
+    <!--给口味表进行映射-->
+    <resultMap id="dishDflvor" type="com.sky.vo.DishVO">
+        <id column="id" property="id"/>
+        <result column="name" property="name"/>
+        <result column="category_id" property="categoryId"/>
+        <result column="price" property="price"/>
+        <result column="image" property="image"/>
+        <result column="description" property="description"/>
+        <result column="status" property="status"/>
+        <result column="update_time" property="updateTime"/>
+        <collection property="flavors" ofType="com.sky.entity.DishFlavor">
+            <id column="df_id" property="id"/>
+            <result column="df_name" property="name"/>
+            <result column="df_value" property="value"/>
+            <result column="id" property="dishId"/>
+        </collection>
+    </resultMap>
+    <!--进行多表查询获取菜品表 和口味表-->
+    <select id="findDishesWithFlavors" resultMap="dishDflvor">
+        select d.id,
+               d.name,
+               d.category_id,
+               d.price,
+               d.image,
+               d.description,
+               d.status,
+               d.update_time,
+               df.name  df_name,
+               df.value df_value,
+               df.id    df_id
+        from dish d
+                 left join dish_flavor df on d.id = df.dish_id
+        where d.id = #{id};
+    </select>
+
+    <!--根据ID或者分类ID获取菜品信息-->
+    <select id="findByIdOrCategoryId" resultType="com.sky.entity.Dish">
+        select * from dish
+        <where>
+            <if test="id!=null">
+                id = #{id}
+            </if>
+            <if test="categoryId">
+                and category_id = #{categoryId}
+            </if>
+        </where>
+    </select>
+
+</mapper>
