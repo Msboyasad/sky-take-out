@@ -8,6 +8,7 @@ import com.sky.service.SetmealService;
 import com.sky.vo.SetmealVO;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +47,7 @@ public class SetemalController {
      * @return
      */
     @GetMapping("/list")
+    @Cacheable(cacheNames = "setmealCache", key = "#categoryId")//判断redis是否存在这个，没有就保存，有就直接返回结果
     public Result setmealByCategory(Long categoryId) {
         List<Setmeal> setmealList = setmealService.findBycategoryId(categoryId);
         return Result.success(setmealList);

@@ -176,7 +176,7 @@
             <if test="id!=null">
                 d.id = #{id}
             </if>
-            <if test="categoryId">
+            <if test="categoryId !=null">
                 and d.category_id = #{categoryId}
             </if>
         </where>

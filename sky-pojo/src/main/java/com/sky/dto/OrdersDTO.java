@@ -21,6 +21,10 @@ public class OrdersDTO implements Serializable {
     //下单用户id
     private Long userId;
 
+    private Integer deliveryStatus;
+    private Integer tablewareNumber;
+    private Integer tablewareStatus;
+
     //地址id
     private Long addressBookId;
 

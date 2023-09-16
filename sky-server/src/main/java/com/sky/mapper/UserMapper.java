@@ -24,4 +24,13 @@ public interface UserMapper {
     @Insert("insert into sky_take_out.user values (null,#{openid},#{name},#{phone},#{sex},#{idNumber},#{avatar},#{createTime})")
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void add(User user);
+
+
+    /**
+     * 根据Id查询用户信息
+     * @param userId
+     * @return
+     */
+    @Select("select  * from sky_take_out.user  where id=#{userId}")
+    User findById(Long userId);
 }

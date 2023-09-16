@@ -75,4 +75,12 @@ public interface DishMapper {
 
     @Autofill(OperationType.INSERT)
     void update(Dish dish);
+
+    /**
+     * 根据ID查询
+     * @param dishId
+     * @return
+     */
+    @Select("select  * from sky_take_out.dish where id = #{dishId}")
+    Dish findById(Long  dishId);
 }

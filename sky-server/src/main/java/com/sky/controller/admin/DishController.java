@@ -14,9 +14,12 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/admin/dish")
@@ -27,6 +30,9 @@ public class DishController {
 
     @Autowired
     private DishService dishService;
+
+    @Resource
+    private RedisTemplate redisTemplate;
 
     /**
      * 菜品添加接口
@@ -40,6 +46,9 @@ public class DishController {
         List<DishFlavor> flavors = dishDTO.getFlavors();
         log.info("11111{}", flavors);
         dishService.save(dishDTO);
+        //Redis推荐使用全量匹配 有增删改操作就删除redis中的数据 重写赋值
+        //增加菜品会影响一个
+        redisTemplate.delete("dish_" + dishDTO.getCategoryId());
         return Result.success();
     }
 
@@ -71,7 +80,14 @@ public class DishController {
     @DeleteMapping
     public Result delete(@RequestParam List<Long> ids) {
         dishService.batchDelete(ids);
+        //删除菜品会影响到多个分类 所有需要全部删除
+        clearCache("dish_*");
         return Result.success();
+    }
+
+    private void clearCache(String key) {
+        Set keys = redisTemplate.keys(key);
+        redisTemplate.delete(keys);
     }
 
     /**
@@ -97,11 +113,14 @@ public class DishController {
     @PutMapping
     public Result update(@RequestBody DishDTO dishDTO) {
         dishService.update(dishDTO);
+        //修改菜品也会影响多个也需要全部删除
+        clearCache("dish_*");
         return Result.success();
     }
 
     /**
      * 修改菜品状态
+     *
      * @param status
      * @param id
      * @return
@@ -118,6 +137,7 @@ public class DishController {
 
     /**
      * 通过分类ID获取对应所有的菜品接口
+     *
      * @param categoryId
      * @return
      */

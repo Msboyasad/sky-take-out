@@ -16,7 +16,7 @@ spring:
     port: ${sky.redis.port}
     host: ${sky.redis.host}
     password: ${sky.redis.password}
-    database: 0
+    database: 1
 
 mybatis:
   #mapper配置文件
