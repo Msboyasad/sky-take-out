@@ -35,6 +35,7 @@ public class CommonController {
     public Result upload(MultipartFile file) throws Exception {
         String suffix = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf("."));
         UUID uuid = UUID.randomUUID();
+        log.info("正在上传图片文件名为:{}", uuid + suffix);
         String url = aliOssUtil.upload(file.getBytes(), uuid + suffix);
         return Result.success(url);
     }

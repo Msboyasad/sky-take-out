@@ -62,5 +62,5 @@ public interface DishService {
      * @param dish
      * @return
      */
-    List<Dish> findCategoryId(Dish dish);
+    List<DishVO> findCategoryId(Dish dish);
 }

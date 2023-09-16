@@ -35,4 +35,7 @@ public class SetmealDish implements Serializable {
 
     //份数
     private Integer copies;
+
+    //菜的图片
+    private String image;
 }

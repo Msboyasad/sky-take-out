@@ -76,7 +76,7 @@ public class SetmealController {
      */
     @ApiOperation("根据ID获取套餐信息接口")
     @GetMapping("/{id}")
-    public Result updateById(@PathVariable Integer id) {
+    public Result updateById(@PathVariable Long id) {
         SetmealVO setmealVO = setmealService.findSetmealWithCategory(id);
         return Result.success(setmealVO);
     }

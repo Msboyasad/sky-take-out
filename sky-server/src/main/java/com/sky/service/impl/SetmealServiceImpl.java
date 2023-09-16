@@ -125,7 +125,7 @@ public class SetmealServiceImpl implements SetmealService {
      * @return
      */
     @Override
-    public SetmealVO findSetmealWithCategory(Integer id) {
+    public SetmealVO findSetmealWithCategory(Long id) {
         SetmealVO setmealVO = setmealMapper.findSetmealWithCategory(id);
         return setmealVO;
     }
@@ -148,4 +148,17 @@ public class SetmealServiceImpl implements SetmealService {
         setmealDishMapper.batchDelete(ids);
 
     }
+
+    /**
+     * 根据分类ID查询套餐信息
+     * @param categoryId
+     * @return
+     */
+    @Override
+    public List<Setmeal> findBycategoryId(Long categoryId) {
+        List<Setmeal> setmealList = setmealMapper.findBycategoryId(categoryId);
+        return setmealList;
+    }
+
+
 }

@@ -63,7 +63,7 @@ public interface DishMapper {
      * @return
      */
     //@Select("select * from sky_take_out.dish where id =#{id}")
-    List<Dish> findByIdOrCategoryId(Dish dish);
+    List<DishVO> findByIdOrCategoryId(Dish dish);
 
     /**
      * 根据ID获取菜品信息和口味信息

@@ -102,7 +102,7 @@ public class CategoryServiceImpl implements CategoryService {
      * @return
      */
     @Override
-    public List<Category> listType(Integer type) {
+    public List<Category> listType(Long type) {
         return categoryMapper.listType(type);
     }
 }

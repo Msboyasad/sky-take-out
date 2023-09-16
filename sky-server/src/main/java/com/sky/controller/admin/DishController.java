@@ -125,7 +125,7 @@ public class DishController {
     @GetMapping("/list")
     public Result findCategoryId(Long categoryId) {
         Dish dish = Dish.builder().categoryId(categoryId).build();
-        List<Dish> dishList = dishService.findCategoryId(dish);
+        List<DishVO> dishList = dishService.findCategoryId(dish);
         return Result.success(dishList);
     }
 

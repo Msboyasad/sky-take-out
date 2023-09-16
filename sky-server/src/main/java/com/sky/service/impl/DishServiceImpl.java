@@ -222,8 +222,8 @@ public class DishServiceImpl implements DishService {
      * @return
      */
     @Override
-    public List<Dish> findCategoryId(Dish dish) {
-        List<Dish> dishList = dishMapper.findByIdOrCategoryId(dish);
+    public List<DishVO> findCategoryId(Dish dish) {
+        List<DishVO> dishList = dishMapper.findByIdOrCategoryId(dish);
         return dishList;
     }
 }

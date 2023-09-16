@@ -11,7 +11,7 @@ import javax.annotation.Resource;
 
 @Configuration
 @Slf4j
-public class AliossConfinguration{
+public class AliossConfiguration{
 
     @Resource
     private AliOssProperties aliOssProperties;

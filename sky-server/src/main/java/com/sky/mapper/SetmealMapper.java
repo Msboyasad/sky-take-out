@@ -43,7 +43,7 @@ public interface SetmealMapper {
      * @return
      */
 
-    SetmealVO findSetmealWithCategory(Integer id);
+    SetmealVO findSetmealWithCategory(Long id);
 
 
     /**
@@ -66,4 +66,14 @@ public interface SetmealMapper {
      * @param ids
      */
     void delete(List<Long> ids);
+
+
+    /**
+     * 根据分类ID查询套餐信息
+     * @param categoryId
+     * @return
+     */
+    @Select("select * from sky_take_out.setmeal where category_id = #{categoryId}")
+    List<Setmeal> findBycategoryId(Long categoryId);
+
 }

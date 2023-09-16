@@ -43,7 +43,7 @@ public interface SetmealService {
      * @param id
      * @return
      */
-    SetmealVO findSetmealWithCategory(Integer id);
+    SetmealVO findSetmealWithCategory(Long id);
 
 
     /**
@@ -51,4 +51,13 @@ public interface SetmealService {
      * @param ids
      */
     void batchDelete(List<Long> ids);
+
+    /**
+     * 根据分类ID查询套餐信息
+     * @param categoryId
+     * @return
+     */
+    List<Setmeal> findBycategoryId(Long categoryId);
+
+
 }

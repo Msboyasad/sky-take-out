@@ -45,4 +45,14 @@
         </where>
         order by sort ,create_time desc
     </select>
+
+    <!--根据type条件进行查找-->
+    <select id="listType" resultType="com.sky.entity.Category">
+        select * from category
+        <where>
+            <if test="type!=null">
+                type = #{type}
+            </if>
+        </where>
+    </select>
 </mapper>

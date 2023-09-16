@@ -110,7 +110,7 @@ public class CategoryController {
      */
     @ApiOperation("根据类型获取分类信息接口")
     @GetMapping("/list")
-    public Result list(Integer type){
+    public Result list(Long type){
         List<Category> categoryList =categoryService.listType(type);
         return Result.success(categoryList);
     }
