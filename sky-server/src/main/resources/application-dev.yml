@@ -14,9 +14,18 @@ sky:
 
   redis:
     port: 6379
-    host: localhost
+    host: 192.168.15.24
     password: 123456
 
   wechat:
     appid: wx2c7191aad44db1df
     secret: bead2bb1d42e0226474751b5663b0b90
+#    appid: wxffb3637a228223b8
+#    secret: 84311df9199ecacdf4f12d27b6b9522d
+    mchid: 1561414331
+    mchSerialNo: 4B3B3DC35414AD50B1B755BAF8DE9CC7CF407606
+    privateKeyFilePath: D:\software\apiclient_key.pem
+    apiV3Key: CZBK51236435wxpay435434323FFDuv3
+    weChatPayCertFilePath: D:\software\wechatpay_166D96F876F45C7D07CE98952A96EC980368ACFC.pem
+    notifyUrl: https://75198b8e.r16.cpolar.top/notify/paySuccess
+    refundNotifyUrl: https://75198b8e.r16.cpolar.top/notify/refundSuccess

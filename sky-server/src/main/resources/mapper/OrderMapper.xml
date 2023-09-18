@@ -11,4 +11,99 @@
                 #{deliveryTime},
                 #{packAmount}, #{tablewareNumber}, #{tablewareStatus})
     </insert>
+
+    <update id="update" parameterType="com.sky.entity.Orders">
+        update orders
+        <set>
+            <if test="cancelReason != null and cancelReason!='' ">
+                cancel_reason=#{cancelReason},
+            </if>
+            <if test="rejectionReason != null and rejectionReason!='' ">
+                rejection_reason=#{rejectionReason},
+            </if>
+            <if test="cancelTime != null">
+                cancel_time=#{cancelTime},
+            </if>
+            <if test="payStatus != null">
+                pay_status=#{payStatus},
+            </if>
+            <if test="payMethod != null">
+                pay_method=#{payMethod},
+            </if>
+            <if test="checkoutTime != null">
+                checkout_time=#{checkoutTime},
+            </if>
+            <if test="status != null">
+                status = #{status},
+            </if>
+            <if test="deliveryTime != null">
+                delivery_time = #{deliveryTime}
+            </if>
+        </set>
+        where id = #{id}
+    </update>
+
+
+    <!--订单和订单详情表字段映射-->
+    <resultMap id="orderDetailMap" type="com.sky.vo.OrderDetailVO">
+        <result column="id" property="id"/>
+        <result column="status" property="status"/>
+        <result column="user_id" property="userId"/>
+        <result column="address_book_id" property="addressBookId"/>
+        <result column="order_time" property="orderTime"/>
+        <result column="checkout_time" property="checkoutTime"/>
+        <result column="pay_method" property="payMethod"/>
+        <result column="pay_status" property="payStatus"/>
+        <result column="amount" property="amount"/>
+        <result column="remark" property="remark"/>
+        <result column="phone" property="phone"/>
+        <result column="address" property="address"/>
+        <result column="user_name" property="userName"/>
+        <result column="consignee" property="consignee"/>
+        <result column="cancel_reason" property="cancelReason"/>
+        <result column="rejection_reason" property="rejectionReason"/>
+        <result column="cancel_time" property="cancelTime"/>
+        <result column="estimated_delivery_time" property="estimatedDeliveryTime"/>
+        <result column="delivery_status" property="deliveryStatus"/>
+        <result column="delivery_time" property="deliveryTime"/>
+        <result column="pack_amount" property="packAmount"/>
+        <result column="tableware_number" property="tablewareNumber"/>
+        <result column="tableware_status" property="tablewareStatus"/>
+        <result column="number" property="number"/>
+        <collection property="orderDetailList" ofType="com.sky.entity.OrderDetail">
+            <id column="odl_id" property="id"/>
+            <result column="odl_name" property="name"/>
+            <result column="odl_image" property="image"/>
+            <result column="odl_order_id" property="orderId"/>
+            <result column="odl_dish_id" property="dishId"/>
+            <result column="odl_setmeal_id" property="setmealId"/>
+            <result column="odl_dish_flavor" property="dishFlavor"/>
+            <result column="odl_number" property="number"/>
+            <result column="odl_amount" property="amount"/>
+        </collection>
+    </resultMap>
+
+
+    <!--查看订单详情-->
+    <select id="findById" resultMap="orderDetailMap">
+        select ds.*,
+        odl.id odl_id,
+        odl.name odl_name,
+        odl.image odl_image,
+        odl.order_id odl_order_id,
+        odl.dish_id odl_dish_id,
+        odl.setmeal_id odl_setmeal_id,
+        odl.dish_flavor odl_dish_flavor,
+        odl.number odl_number,
+        odl.amount odl_amount
+        from orders ds
+        left join order_detail odl on ds.id = odl.order_id
+        <where>
+            <if test="id!=null">
+                ds.id = #{id}
+            </if>
+        </where>
+
+    </select>
+
 </mapper>
