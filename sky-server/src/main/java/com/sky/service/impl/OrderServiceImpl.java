@@ -4,7 +4,9 @@ package com.sky.service.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
+import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersCancelDTO;
 import com.sky.dto.OrdersDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersPaymentDTO;
@@ -16,6 +18,7 @@ import com.sky.service.OrderService;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderDetailVO;
 import com.sky.vo.OrderPaymentVO;
+import com.sky.vo.OrderStatisticsVO;
 import com.sky.vo.OrderSubmitVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -167,7 +170,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDetailVO findOrderDetail(Long id) {
 
-        Page<OrderDetailVO> page = orderMapper.findById(id);
+        Page<OrderDetailVO> page = orderMapper.findById(Orders.builder().id(id).build());
         List<OrderDetailVO> result = page.getResult();
         OrderDetailVO orderDetailVO = result.get(0);
         return orderDetailVO;
@@ -181,10 +184,89 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public PageResult findHistoryOrders(OrdersPageQueryDTO ordersPageQueryDTO) {
         PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
-        Page<OrderDetailVO> page = orderMapper.findById(null);
+        Orders orders = new Orders();
+        orders.setUserId(ordersPageQueryDTO.getUserId());
+        BeanUtils.copyProperties(ordersPageQueryDTO, orders);
+        Page<OrderDetailVO> page = orderMapper.findById(orders);
+        log.info("111111{}",page.getResult());
         return PageResult.builder()
                 .total(page.getTotal())
                 .records(page.getResult())
                 .build();
+    }
+
+
+    /**
+     * 再来一单
+     *
+     * @param id
+     */
+    @Override
+    public void repetition(Long id) {
+        Orders o = Orders.builder().id(id).build();
+        //首先根据id查询订单信息
+        List<OrderDetailVO> detailVOList = orderMapper.findById(o).getResult();
+        OrderDetailVO orderDetailVO = detailVOList.get(0);
+        //添加数据
+        Orders orders = new Orders();
+        BeanUtils.copyProperties(orderDetailVO, orders);
+        orders.setId(null);
+        orders.setNumber(UUID.randomUUID().toString().replace("-",""));
+        orders.setStatus(Orders.PENDING_PAYMENT);
+        //添加下单信息
+        orderMapper.add(orders);
+        //添加下单详情信息
+        List<OrderDetail> orderDetailList = orderDetailVO.getOrderDetailList().stream().map(
+                orderDetail -> {
+                    orderDetail.setOrderId(orders.getId());
+                    return orderDetail;
+                }
+        ).collect(Collectors.toList());
+        orderDetailMapper.add(orderDetailList);
+
+    }
+
+
+    /**
+     * 取消订单
+     *
+     * @param orders
+     */
+    @Override
+    public void cancel(Orders orders) {
+        orderMapper.update(orders);
+    }
+
+
+    /**
+     * 管理端分页查询
+     * @param ordersPageQueryDTO
+     * @return
+     */
+    @Override
+    public PageResult conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO) {
+        PageHelper.startPage(ordersPageQueryDTO.getPage(),ordersPageQueryDTO.getPageSize());
+        Page<Orders> page = orderMapper.page(ordersPageQueryDTO);
+        return PageResult.builder()
+                .total(page.getTotal())
+                .records(page.getResult())
+                .build();
+    }
+
+
+    /**
+     * 各个状态的订单数量统计
+     * @return
+     */
+    @Override
+    public OrderStatisticsVO statistics() {
+       Integer count2 = orderMapper.count(Orders.TO_BE_CONFIRMED);
+       Integer count3 = orderMapper.count(Orders.CONFIRMED);
+       Integer count4 = orderMapper.count(Orders.DELIVERY_IN_PROGRESS);
+        OrderStatisticsVO orderStatisticsVO = new OrderStatisticsVO();
+        orderStatisticsVO.setToBeConfirmed(count2);
+        orderStatisticsVO.setConfirmed(count3);
+        orderStatisticsVO.setDeliveryInProgress(count4);
+        return orderStatisticsVO;
     }
 }

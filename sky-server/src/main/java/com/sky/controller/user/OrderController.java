@@ -1,9 +1,12 @@
 package com.sky.controller.user;
 
 
+import com.sky.context.BaseContext;
+import com.sky.dto.OrdersCancelDTO;
 import com.sky.dto.OrdersDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersPaymentDTO;
+import com.sky.entity.Orders;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.OrderService;
@@ -59,14 +62,15 @@ public class OrderController {
 
     /**
      * 查询订单详情接口
+     *
      * @param id
      * @return
      */
     @ApiOperation("查询订单详情接口")
     @GetMapping("/orderDetail/{id}")
     public Result orderDetail(@PathVariable Long id) {
-        log.info("查询订单详情用户为:{}",id);
-       OrderDetailVO orderDetailVO = orderService.findOrderDetail(id);
+        log.info("查询订单详情用户为:{}", id);
+        OrderDetailVO orderDetailVO = orderService.findOrderDetail(id);
         return Result.success(orderDetailVO);
     }
 
@@ -75,10 +79,44 @@ public class OrderController {
      */
     @ApiOperation("历史订单查询接口")
     @GetMapping("/historyOrders")
-    public Result historyOrders(OrdersPageQueryDTO ordersPageQueryDTO){
+    public Result historyOrders(OrdersPageQueryDTO ordersPageQueryDTO) {
         log.info("历史订单查询");
+        Long userId = BaseContext.get();
+        ordersPageQueryDTO.setUserId(userId);
         PageResult pageResult = orderService.findHistoryOrders(ordersPageQueryDTO);
         return Result.success(pageResult);
+    }
+
+
+    /**
+     * 再来一单接口
+     *
+     * @param id
+     * @return
+     */
+    @ApiOperation("在来一单接口")
+    @PostMapping("/repetition/{id}")
+    public Result repetition(@PathVariable Long id) {
+        orderService.repetition(id);
+        return Result.success();
+    }
+
+
+    /**
+     * 取消订单接口
+     *
+     * @param id
+     * @return
+     */
+    @ApiOperation("取消订单接口")
+    @PutMapping("/cancel/{id}")
+    public Result cancel(@PathVariable Long id) {
+        Orders orders = Orders.builder()
+                .id(id)
+                .status(Orders.CANCELLED)
+                .build();
+        orderService.cancel(orders);
+        return Result.success();
     }
 
 }

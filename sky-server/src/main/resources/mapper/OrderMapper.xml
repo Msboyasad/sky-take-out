@@ -46,7 +46,7 @@
 
     <!--订单和订单详情表字段映射-->
     <resultMap id="orderDetailMap" type="com.sky.vo.OrderDetailVO">
-        <result column="id" property="id"/>
+        <result column="ds_id" property="id"/>
         <result column="status" property="status"/>
         <result column="user_id" property="userId"/>
         <result column="address_book_id" property="addressBookId"/>
@@ -87,6 +87,7 @@
     <!--查看订单详情-->
     <select id="findById" resultMap="orderDetailMap">
         select ds.*,
+        ds.id ds_id,
         odl.id odl_id,
         odl.name odl_name,
         odl.image odl_image,
@@ -97,13 +98,55 @@
         odl.number odl_number,
         odl.amount odl_amount
         from orders ds
-        left join order_detail odl on ds.id = odl.order_id
+        inner join order_detail odl on ds.id = odl.order_id
         <where>
             <if test="id!=null">
                 ds.id = #{id}
             </if>
+            <if test="userId!=null">
+                and ds.user_id = #{userId}
+            </if>
+            <if test="status!=null">
+                and ds.status = #{status}
+            </if>
         </where>
 
     </select>
+
+
+    <!--管理端分页查询-->
+    <select id="page" resultType="com.sky.entity.Orders">
+        select * from orders
+        <where>
+            <if test="status!=null">
+                status=#{status}
+            </if>
+            <if test="number!=null">
+                and number=#{number}
+            </if>
+            <if test="phone!=null">
+                and phone=#{phone}
+            </if>
+            <if test="beginTime!=null and endTime!=null">
+                and order_time between #{beginTime} and #{endTime}
+            </if>
+        </where>
+    </select>
+
+
+
+
+    <!--各个状态的订单数量统计-->
+<!--    <select id="count" resultType="com.sky.vo.OrderStatisticsVO">-->
+<!--        select-->
+<!--            CASE status-->
+<!--                when 2 then 'toBeConfirmed'-->
+<!--                when 3 then 'confirmed'-->
+<!--                when 4 then 'deliveryInProgress'-->
+<!--                END toBeConfirmed,-->
+<!--            count(status),status-->
+<!--        from sky_take_out.orders group by status-->
+<!--        ;-->
+<!--    </select>-->
 
 </mapper>
