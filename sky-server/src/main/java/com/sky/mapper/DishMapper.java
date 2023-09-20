@@ -6,6 +6,7 @@ import com.sky.annotation.Autofill;
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.entity.Dish;
+import com.sky.entity.DishStatus;
 import com.sky.enumeration.OperationType;
 import com.sky.vo.DishVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -83,4 +84,11 @@ public interface DishMapper {
      */
     @Select("select  * from sky_take_out.dish where id = #{dishId}")
     Dish findById(Long  dishId);
+
+    /**
+     * 查询菜品状态总览
+     * @return
+     */
+    @Select("select count(status) number,status from sky_take_out.dish group by status")
+    List<DishStatus> countStatus();
 }

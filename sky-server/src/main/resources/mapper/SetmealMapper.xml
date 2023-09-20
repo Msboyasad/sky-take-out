@@ -140,4 +140,11 @@
         <include refid="foreachIds"/>
         and status =1
     </select>
+
+    <!--查询套餐总览-->
+    <select id="countStatus" resultType="com.sky.entity.SetmealStatus">
+        select count(status) number, status
+        from setmeal
+        group by status;
+    </select>
 </mapper>

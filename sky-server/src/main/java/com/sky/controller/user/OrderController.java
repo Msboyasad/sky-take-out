@@ -1,6 +1,7 @@
 package com.sky.controller.user;
 
 
+import com.alibaba.fastjson.JSONObject;
 import com.sky.context.BaseContext;
 import com.sky.dto.OrdersCancelDTO;
 import com.sky.dto.OrdersDTO;
@@ -10,6 +11,7 @@ import com.sky.entity.Orders;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.OrderService;
+import com.sky.sokecet.WebSocketServer;
 import com.sky.vo.OrderDetailVO;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
@@ -30,6 +32,8 @@ import java.util.List;
 public class OrderController {
 
     private final OrderService orderService;
+
+    private final WebSocketServer webSocketServer;
 
     /**
      * 用户下单接口
@@ -116,6 +120,24 @@ public class OrderController {
                 .status(Orders.CANCELLED)
                 .build();
         orderService.cancel(orders);
+        return Result.success();
+    }
+
+
+    /**
+     * 催单接口
+     * @param id
+     * @return
+     */
+    @ApiOperation("催单接口")
+    @GetMapping("/reminder/{id}")
+    public Result reminder(@PathVariable Long id) {
+        OrderDetailVO orderDetailVO = orderService.findOrderDetail(id);
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type", 2);
+        jsonObject.put("orderId", orderDetailVO.getId());
+        jsonObject.put("content", "订单号:" + orderDetailVO.getNumber());
+        webSocketServer.sendToAllClient(jsonObject.toJSONString());
         return Result.success();
     }
 

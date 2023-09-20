@@ -5,6 +5,7 @@ import com.sky.context.BaseContext;
 import com.sky.dto.OrdersCancelDTO;
 import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.entity.Orders;
+import com.sky.mapper.OrderMapper;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.OrderService;
@@ -16,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 @RestController("adminOrderController")
@@ -25,6 +27,8 @@ import java.util.List;
 public class OrderController {
     @Autowired
     private OrderService orderService;
+    @Resource
+    private OrderMapper orderMapper;
 
 
     /**
@@ -83,6 +87,7 @@ public class OrderController {
     @PutMapping("/confirm")
     public Result confirm(@RequestBody Orders orders) {
         orders.setStatus(Orders.CONFIRMED);
+        orderMapper.update(orders);
         return Result.success();
     }
 

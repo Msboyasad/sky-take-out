@@ -4,13 +4,18 @@ import com.alibaba.druid.support.json.JSONUtils;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.sky.properties.WeChatProperties;
+import com.sky.result.Result;
 import com.sky.service.OrderService;
+import com.sky.sokecet.WebSocketServer;
 import com.wechat.pay.contrib.apache.httpclient.util.AesUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.entity.ContentType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedReader;
@@ -103,9 +108,10 @@ public class PayNotifyController {
 
     /**
      * 给微信响应
+     *
      * @param response
      */
-    private void responseToWeixin(HttpServletResponse response) throws Exception{
+    private void responseToWeixin(HttpServletResponse response) throws Exception {
         response.setStatus(200);
         HashMap<Object, Object> map = new HashMap<>();
         map.put("code", "SUCCESS");
@@ -113,5 +119,17 @@ public class PayNotifyController {
         response.setHeader("Content-type", ContentType.APPLICATION_JSON.toString());
         response.getOutputStream().write(JSONUtils.toJSONString(map).getBytes(StandardCharsets.UTF_8));
         response.flushBuffer();
+    }
+
+    @Resource
+    private WebSocketServer webSocketServer;
+
+    @GetMapping("/orderReminder")
+    public void orderReminder(Long id, String number) {
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("type", 1);
+        jsonObject.put("orderId", id);
+        jsonObject.put("content", "订单号:" + number);
+        webSocketServer.sendToAllClient(jsonObject.toJSONString());
     }
 }

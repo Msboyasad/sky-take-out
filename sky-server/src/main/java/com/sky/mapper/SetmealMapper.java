@@ -7,8 +7,10 @@ import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.dto.ShoppingCartDTO;
 import com.sky.entity.Setmeal;
+import com.sky.entity.SetmealStatus;
 import com.sky.entity.ShoppingCart;
 import com.sky.enumeration.OperationType;
+import com.sky.vo.SetmealOverViewVO;
 import com.sky.vo.SetmealVO;
 import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Delete;
@@ -79,4 +81,10 @@ public interface SetmealMapper {
     @Select("select * from sky_take_out.setmeal where category_id = #{categoryId}")
     List<Setmeal> findBycategoryId(Long categoryId);
 
+
+    /**
+     * 查询套餐总览
+     * @return
+     */
+    List<SetmealStatus> countStatus();
 }
