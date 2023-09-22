@@ -71,27 +71,32 @@ public class WorkspaceServiceImpl implements WorkspaceService {
      * @return
      */
     @Override
-    public BusinessDataVO businessData() {
+    public BusinessDataVO businessData(LocalDate begin, LocalDate end) {
         //获取今日的日期
         LocalDate now = LocalDate.now();
-        LocalDateTime startTime = LocalDateTime.of(now, LocalTime.MIN);
-        LocalDateTime endTime = LocalDateTime.of(now, LocalTime.MAX);
+        LocalDateTime startTime = LocalDateTime.of(begin, LocalTime.MIN);
+        LocalDateTime endTime = LocalDateTime.of(end, LocalTime.MAX);
         //获取今日新增用户数
         Map map = new HashMap();
         map.put("startTime", startTime);
         map.put("endTime", endTime);
         Integer newUsers = userMapper.countSum(map);
         //获取今日所有订单
-        Integer toDayOrders = orderMapper.orderCountSum(map);
+        Integer toDayOrders = orderMapper.orderCountSum(map) == null ? 0 : orderMapper.orderCountSum(map);
         //获取今日有效订单数
         map.put("status", Orders.COMPLETED);
-        Integer validOrderCount = orderMapper.orderCountSum(map);
+        Integer validOrderCount = orderMapper.orderCountSum(map) == null ? 0 : orderMapper.orderCountSum(map);
         //计算订单完成率 今日有效订单数/当日所有订单
-        Double orderCompletionRate = (validOrderCount * 1.0) / toDayOrders;
-        //今日营业额
-        Double turnover = orderMapper.countSum(map);
-        //计算平均客单价 订单总金额/成交订单总人数
-        Double unitPrice = (turnover * 1.0) / validOrderCount;
+        Double unitPrice = 0.0;
+        Double orderCompletionRate = 0.0;
+        Double turnover = 0.0;
+        if (toDayOrders != 0 && validOrderCount != 0) {
+            orderCompletionRate = (validOrderCount * 1.0) / toDayOrders;
+            //今日营业额
+            turnover = orderMapper.countSum(map);
+            //计算平均客单价 订单总金额/成交订单总人数
+            unitPrice = (turnover * 1.0) / validOrderCount;
+        }
         return BusinessDataVO.builder()
                 .newUsers(newUsers)
                 .orderCompletionRate(orderCompletionRate)

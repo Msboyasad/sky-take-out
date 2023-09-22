@@ -42,4 +42,16 @@ public interface ReportService {
      * @return
      */
     SalesTop10ReportVO commodityTop10(LocalDate begin, LocalDate end);
+
+
+    /**
+     * 导出Excel报表
+     */
+    void export();
+
+
+    /**
+     * 导出Excel报表方式2
+     */
+    void export2();
 }

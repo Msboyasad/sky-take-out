@@ -1,6 +1,7 @@
 package com.sky.controller.admin;
 
 
+import com.alibaba.excel.EasyExcel;
 import com.sky.dto.GoodsSalesDTO;
 import com.sky.result.Result;
 import com.sky.service.ReportService;
@@ -92,5 +93,18 @@ public class ReportController {
         log.info("商品Top10");
         SalesTop10ReportVO top10 = reportService.commodityTop10(begin, end);
         return Result.success(top10);
+    }
+
+    /**
+     * 导出Excel报表接口
+     *
+     * @return
+     */
+    @ApiOperation("导出Excel报表接口")
+    @GetMapping("/export")
+    public String export() {
+        //reportService.export();//poi 方式 如果数据量过多会导致内存溢出
+        reportService.export2();//EasyExcel 方式 可以进行分页查询
+        return "OK";
     }
 }

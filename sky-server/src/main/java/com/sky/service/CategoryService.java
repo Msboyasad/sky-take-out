@@ -41,4 +41,9 @@ public interface CategoryService {
      * @return
      */
     List<Category> listType(Long type);
+
+    /**
+     * 获取所有
+     */
+    List<Category> list();
 }

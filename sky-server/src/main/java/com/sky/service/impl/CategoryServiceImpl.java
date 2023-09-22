@@ -105,4 +105,15 @@ public class CategoryServiceImpl implements CategoryService {
     public List<Category> listType(Long type) {
         return categoryMapper.listType(type);
     }
+
+
+    /**
+     * 获取所有
+     * @param type
+     * @return
+     */
+    @Override
+    public List<Category> list() {
+        return categoryMapper.list();
+    }
 }

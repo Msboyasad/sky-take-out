@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.lang.annotation.Target;
+import java.time.LocalDate;
 
 /**
  * @Description TODO
@@ -43,7 +44,7 @@ public class WorkspaceController {
     @GetMapping("/businessData")
     public Result businessData() {
         log.info("查询今日运营数据");
-        BusinessDataVO businessDataVO = workspaceService.businessData();
+        BusinessDataVO businessDataVO = workspaceService.businessData(LocalDate.now(), LocalDate.now());
         return Result.success(businessDataVO);
     }
 

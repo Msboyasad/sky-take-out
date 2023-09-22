@@ -17,6 +17,8 @@ spring:
     host: ${sky.redis.host}
     password: ${sky.redis.password}
     database: 1
+  cache:
+    type: redis
 
 mybatis:
   #mapper配置文件

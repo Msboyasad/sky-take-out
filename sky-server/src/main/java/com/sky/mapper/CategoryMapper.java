@@ -61,4 +61,12 @@ public interface CategoryMapper {
      */
 
     List<Category> listType(Long type);
+
+
+    /**
+     * 查询所有
+     * @return
+     */
+    @Select("select * from category")
+    List<Category> list();
 }

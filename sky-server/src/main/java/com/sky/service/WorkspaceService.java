@@ -5,6 +5,8 @@ import com.sky.vo.DishOverViewVO;
 import com.sky.vo.OrderOverViewVO;
 import com.sky.vo.SetmealOverViewVO;
 
+import java.time.LocalDate;
+
 /**
  * @Description TODO
  * @Author XiaLiu
@@ -16,7 +18,7 @@ public interface WorkspaceService {
      * 查询今日运营数据
      * @return
      */
-    BusinessDataVO businessData();
+    BusinessDataVO businessData(LocalDate begin, LocalDate end);
 
 
     /**

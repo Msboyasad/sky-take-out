@@ -1,5 +1,6 @@
 package com.sky.entity;
 
+import com.alibaba.excel.annotation.ExcelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,19 +17,19 @@ public class Category implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private Long id;
-
+    @ExcelProperty("类别类型")
     //类型: 1菜品分类 2套餐分类
     private Integer type;
-
+    @ExcelProperty("类别名字")
     //分类名称
     private String name;
-
+    @ExcelProperty("排序")
     //顺序
     private Integer sort;
 
     //分类状态 0标识禁用 1表示启用
     private Integer status;
-
+    @ExcelProperty("修改时间")
     //创建时间
     private LocalDateTime createTime;
 
